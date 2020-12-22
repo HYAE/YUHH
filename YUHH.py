@@ -5,8 +5,8 @@ import text_generator as textgen
 import trivia_game as trivia
 import time, os
 import score_handler
+from dotenv import load_dotenv
 
-secret = 'Nzg5OTE4MzY3MTYyNjk1NzQw.X95Czg.DHR1RZ2-G8ZUCkYzThipDaGX-kU'
 client = discord.Client()
 
 #global variables
@@ -200,5 +200,5 @@ def checkOngoingGame():
         return [True, "Trivia Game"]
     return [False, None]
 
-
-client.run(secret)
+load_dotenv()
+client.run(os.getenv('TOKEN'))
