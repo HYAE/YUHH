@@ -19,3 +19,17 @@ def generate_quote():
     t = random.randint(0, len(data))
     data = data[t]
     return [data['text'], data['author']]
+
+def generate_compliment():
+    link = r'https://complimentr.com/api'
+    r = requests.get(url = link, params = {'address': '127.0.0.1'})
+    data = r.json()
+
+    return data['compliment']
+
+def generate_pickup_line():
+    link = r'http://bplaas.herokuapp.com/pickup-line'
+    r = requests.get(url = link, params = {'address': '127.0.0.1'})
+    data = r.json()
+
+    return data['pickup_line']

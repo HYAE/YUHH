@@ -62,4 +62,3 @@ def print_score(filename):
 
     output += '\n' + '-' * 40
     return output
-

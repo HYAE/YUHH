@@ -5,8 +5,8 @@ import text_generator as textgen
 import trivia_game as trivia
 import time, os
 import score_handler
-from dotenv import load_dotenv
 
+secret = 'Nzg5OTE4MzY3MTYyNjk1NzQw.X95Czg.DHR1RZ2-G8ZUCkYzThipDaGX-kU'
 client = discord.Client()
 
 #global variables
@@ -58,7 +58,30 @@ async def on_message(message):
         score_files = os.listdir(filepath)
 
         await channel.send(score_handler.print_scores())
-        
+        return
+    
+    #COMPLIMENT
+    if message.content == "complimentme" or message.content == "praiseme":
+        channel = message.channel
+        compliment = textgen.generate_compliment()
+
+        await channel.send(compliment)
+
+        def checkfunc(m):
+            if m.channel != channel:
+                return False
+            pattern = "thanks|thankyou|ty|thx|thnks"
+            if re.match(pattern, gtd.sanitise(m.content)):
+                return True
+
+        msg = await client.wait_for('message', check=checkfunc)
+        await channel.send('Youre welcome! (nerd)')
+        return
+    
+    #PICKUP LINE
+    if message.content == "pickmeup":
+        await message.channel.send(textgen.generate_pickup_line())
+        return
         
     #TRIVIA GAME 
     if Trivia_Game[0]:
@@ -177,5 +200,5 @@ def checkOngoingGame():
         return [True, "Trivia Game"]
     return [False, None]
 
-load_dotenv()
-client.run(os.getenv('TOKEN'))
+
+client.run(secret)
