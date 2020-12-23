@@ -9,9 +9,11 @@ from dotenv import load_dotenv
 
 client = discord.Client()
 
-#global variables
-Guessing_Game = [False, "", 5, None] #First is whether the game is ongoing, second is the ans, third is chances left, fourth is channel to look for guesses in
-Trivia_Game = [False,-1, [], None] #First is whether the game is ongoing, second is the index of correct ans, third is array of ans, fourth is channel to look for answers in
+#global variables TODO: CHANGE LISTS TO DICTS
+Guessing_Game = {"Ongoing" : False, "Answer" : None, "Chances" : 5, "Channel" : None}
+Trivia_Game = {"Ongoing" : False, "Answer_Index" : 0, "Answers" : [], "Channel" : None}
+Conversation = {"Ongoing" : False, "Channel" : None}
+
 
 @client.event
 async def on_ready():
@@ -21,7 +23,9 @@ async def on_ready():
 #for reference, https://discordpy.readthedocs.io/en/latest/migrating.html#sending-messages
 @client.event
 async def on_message(message):
+    
     #remove spaces and lowercase it to make it consistent with commands
+    unsanitised_message = message
     message.content = gtd.sanitise(message.content)
     if message.author == client.user:
         return
@@ -74,7 +78,7 @@ async def on_message(message):
             if re.match(pattern, gtd.sanitise(m.content)):
                 return True
 
-        msg = await client.wait_for('message', check=checkfunc)
+        msg = await client.wait_for_message(timeout = 5, author = message.author ,check=checkfunc)
         await channel.send('Youre welcome! (nerd)')
         return
     
@@ -82,12 +86,27 @@ async def on_message(message):
     if message.content == "pickmeup":
         await message.channel.send(textgen.generate_pickup_line())
         return
+
+
+    #CONVERSATION
+    if Conversation["Ongoing"]:
+        channel = message.channel
+        if channel != Conversation["Channel"]:
+            return
+
         
+            
+    
+    
+    if message.content == "talkwithme":
+        Conversation["Ongoing"] = True
+    
+    
     #TRIVIA GAME 
-    if Trivia_Game[0]:
+    if Trivia_Game["Ongoing"]:
         #If the message was not sent in the trivia game channel, continue
         channel = message.channel
-        if channel != Trivia_Game[3]:
+        if channel != Trivia_Game["Channel"]:
             return
 
         answer = message.content
@@ -97,18 +116,18 @@ async def on_message(message):
             await channel.send("Send only the number, ya nerd. (1,2,3,4)")
             return
         
-        correct_ans = Trivia_Game[2][Trivia_Game[1]]
-        print(answer, Trivia_Game[1])
-        if int(answer) - 1 != Trivia_Game[1]:
-            await channel.send("Wrong! The answer was {} ({})".format(Trivia_Game[1] + 1, correct_ans))
+        correct_ans = Trivia_Game["Answers"][Trivia_Game["Answer_Index"]]
+        print(answer, Trivia_Game["Answer_Index"])
+        if int(answer) - 1 != Trivia_Game["Answer_Index"]:
+            await channel.send("Wrong! The answer was {} ({})".format(Trivia_Game["Answer_Index"] + 1, correct_ans))
         else:
-            await channel.send("Correct! The answer is {} ({})".format(Trivia_Game[1] + 1, correct_ans))
+            await channel.send("Correct! The answer is {} ({})".format(Trivia_Game["Answer_Index"] + 1, correct_ans))
 
             #add score
             score_handler.add_score("Trivia_Game", message.author.name)
             
 
-        Trivia_Game[0] = False
+        Trivia_Game["Ongoing"] = False
 
     
     if message.content == "trivia":
@@ -119,7 +138,7 @@ async def on_message(message):
 
         
         channel = message.channel
-        Trivia_Game[3] = channel
+        Trivia_Game["Channel"] = channel
         await channel.send("Starting Game")
 
         #get the trivia qns
@@ -137,30 +156,30 @@ async def on_message(message):
         await channel.send("Q:\t" + question)
         await channel.send("1.\t{}\n2.\t{}\n3.\t{}\n4.\t{}".format(answers[0], answers[1], answers[2], answers[3]))
 
-        Trivia_Game[0] = True
-        Trivia_Game[2] = answers
-        Trivia_Game[1] = answers.index(results['correct_answer'])
+        Trivia_Game["Ongoing"] = True
+        Trivia_Game["Answers"] = answers
+        Trivia_Game["Answer_Index"] = answers.index(results['correct_answer'])
         return
 
 
     #GUESSING GAME  
-    if Guessing_Game[0]:
+    if Guessing_Game["Ongoing"]:
         #If the message was not sent in the guessing game channel, continue
         channel = message.channel
-        if channel != Guessing_Game[3]:
+        if channel != Guessing_Game["Channel"]:
             return
         answer = gtd.sanitise(message.content)
-        if answer != Guessing_Game[1]:
-            Guessing_Game[2] = Guessing_Game[2] - 1
-            await channel.send("Wrong! " + str(Guessing_Game[2]) + " Chance(s) left")
-            if Guessing_Game[2] <= 0:
-                await channel.send("The answer was " + Guessing_Game[1])
-                Guessing_Game[0] = False
+        if answer != Guessing_Game["Answer"]:
+            Guessing_Game["Chances"] = Guessing_Game["Chances"] - 1
+            await channel.send("Wrong! " + str(Guessing_Game["Chances"]) + " Chance(s) left")
+            if Guessing_Game["Chances"] <= 0:
+                await channel.send("The answer was " + Guessing_Game["Answer"])
+                Guessing_Game["Ongoing"] = False
         else:
-            await channel.send("Correct! The answer is " + Guessing_Game[1])
+            await channel.send("Correct! The answer is " + Guessing_Game["Answer"])
             #add score
-            score_handler.add_score("Trivia_Game", message.author.name)
-            Guessing_Game[0] = False
+            score_handler.add_score("Guessing_Game", message.author.name)
+            Guessing_Game["Ongoing"] = False
 
         
     if message.content == "guess":
@@ -172,31 +191,31 @@ async def on_message(message):
 
         
         channel = message.channel
-        Guessing_Game[3] = channel
+        Guessing_Game["Channel"] = channel
         await channel.send("Starting Game")
 
         #do stuff with img and answer
         img, name = gtd.getImage()
         img = img.image
-        Guessing_Game[1] = gtd.sanitise(name)
+        Guessing_Game["Answer"] = gtd.sanitise(name)
         
         with io.BytesIO() as binary:
             img.save(binary, 'PNG')
             binary.seek(0)
             await channel.send(file=discord.File(fp=binary, filename="image.png"))
 
-        await channel.send("What is this image? ({} {} letters)".format(re.sub("[a-z]", "-", name.strip()), str(len(Guessing_Game[1]))))
+        await channel.send("What is this image? ({} {} letters)".format(re.sub("[a-z]", "-", name.strip()), str(len(Guessing_Game["Answer"]))))
 
-        Guessing_Game[0] = True
-        Guessing_Game[2] = 5
+        Guessing_Game["Ongoing"] = True
+        Guessing_Game["Chances"] = 5
         return
 
         
 def checkOngoingGame():
     #returns True if a game is currently being played, and a string of which game.
-    if Guessing_Game[0]:
+    if Guessing_Game["Ongoing"]:
         return [True, "Guessing Game"]
-    if Trivia_Game[0]:
+    if Trivia_Game["Ongoing"]:
         return [True, "Trivia Game"]
     return [False, None]
 
