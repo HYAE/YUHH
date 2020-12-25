@@ -7,6 +7,7 @@ import time, os
 import score_handler
 from dotenv import load_dotenv
 import comic_generator as comicgen
+import asyncio
 
 client = discord.Client()
 
@@ -144,14 +145,18 @@ async def compliment(message):
     await channel.send(compliment)
 
     def checkfunc(m):
-        if m.channel != channel:
+        if m.channel != channel or m.author != message.author: #if the guy who said thanks isnt the guy who asked for the compliment
             return False
         pattern = "thanks|thankyou|ty|thx|thnks"
         if re.match(pattern, gtd.sanitise(m.content)):
             return True
-
-    msg = await client.wait_for('message', timeout = 2, author = message.author ,check=checkfunc)
-    await channel.send('Youre welcome! (nerd)')
+    try:
+        msg = await client.wait_for('message', timeout = 5,check=checkfunc)
+        await channel.send('Youre welcome! (nerd)')
+    except asyncio.TimeoutError:
+        #if the reply wasnt received before the timeout
+        await channel.send('No thanks ah? ok nerd.')
+        
     return
 
 @lock
