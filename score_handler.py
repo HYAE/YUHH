@@ -54,11 +54,11 @@ def print_score(filename):
 
     r = csv.reader(open(filepath, newline=''))
     lines = list(r)
-
-    lines.sort(key=lambda x: x[1], reverse=True)
+    lines.sort(key=lambda x: int(x[1]), reverse=True)
 
     for line in lines:
         output += '\n{}\t\t\t:\t\t\t{}'.format(line[0], line[1])
 
     output += '\n' + '-' * 40
     return output
+
