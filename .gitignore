@@ -1,1 +1,8 @@
 .env
+scores/
+.quickdrawcache/
+__pycache__/
+chatbot/
+
+
+image_getter.py
