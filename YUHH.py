@@ -17,10 +17,11 @@ Conversation = {"Ongoing" : False, "Channel" : None}
 locked = False
 
 
+
 @client.event
 async def on_ready():
     for guild in client.guilds:
-        await guild.system_channel.send("Yuhhh dudes im here")
+        await guild.system_channel.send('Yuhhh dudes im here')
 
 #for reference, https://discordpy.readthedocs.io/en/latest/migrating.html#sending-messages
 @client.event
@@ -31,13 +32,18 @@ async def on_message(message):
     #remove spaces and lowercase it to make it consistent with commands
     unsanitised_message = message
     message.content = gtd.sanitise(message.content)
-    
-    if message.content == "testing":
-        channel = message.channel
-        reply = 'what a nerd, ' + str(message.author.name)
-        await channel.send(reply)
 
+    if message.content == 'ping':
+        await message.channel.send(f'pong! ye chuan sucks {round(client.latency * 1000)} ms')
         return
+
+    if message.content == 'testing':
+        await message.channel.send(f'What a nerd, {message.author.name}')
+        return
+
+    #LOG OUT
+    if message.content == 'gettheyuhhouttahere':
+        await log_out(message)
 
     #INSULT
     if message.content == "insultme":
@@ -59,8 +65,9 @@ async def on_message(message):
     if message.content == "complimentme" or message.content == "praiseme":
         await compliment(message)
     
+
     #PICKUP LINE
-    if message.content == "pickmeup":
+    if message.content == 'pickmeup':
         await message.channel.send(textgen.generate_pickup_line())
         return
 
@@ -94,6 +101,13 @@ def lock(func):
         await func(message)
         locked = False
     return inner
+
+@lock
+async def log_out(message):
+    await client.change_presence(status=discord.Status.offline)
+    await message.channel.send('Ok.. byee ;-;')
+    await client.close()
+    return
 
 @lock
 async def insult(message):
@@ -177,7 +191,6 @@ async def trivia_game(message):
 
         #add score
         score_handler.add_score("Trivia_Game", message.author.name)
-        
 
     Trivia_Game["Ongoing"] = False
 
@@ -225,6 +238,7 @@ async def guessing_game(message):
         await channel.send("Wrong! " + str(Guessing_Game["Chances"]) + " Chance(s) left")
         if Guessing_Game["Chances"] <= 0:
             await channel.send("The answer was " + Guessing_Game["Answer"])
+
             Guessing_Game["Ongoing"] = False
     else:
         await channel.send("Correct! The answer is " + Guessing_Game["Answer"])
@@ -238,7 +252,6 @@ async def guessing_game_start(message):
     if check[0]:
         await message.channel.send(check[1] + " ongoing")
         return
-
     
     channel = message.channel
     Guessing_Game["Channel"] = channel
@@ -259,7 +272,6 @@ async def guessing_game_start(message):
     Guessing_Game["Ongoing"] = True
     Guessing_Game["Chances"] = 5
     return
-
 
 
 def checkOngoingGame():
