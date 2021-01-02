@@ -78,6 +78,11 @@ async def on_message(message):
         await show_comic(message)
         return
 
+    #CHEER UP
+    if 'imsad' in sanitise(message.content, (' ', '-', '\'', '‘', '’')) or message.content == 'sad':
+        await cheer_up(message)
+        return
+
     #SHOW A RANDOM PICTURE FROM PIXABAY
     if unsanitised_message_content[:21].lower() == ('show me a picture of '):
         await show_pic(message, unsanitised_message_content[21:])
@@ -87,15 +92,12 @@ async def on_message(message):
     if Trivia_Game["Ongoing"]:
         await trivia_game(message)
 
-
     if message.content == "trivia":
         await trivia_game_start(message)
-
 
     #GUESSING GAME
     if Guessing_Game["Ongoing"]:
         await guessing_game(message)
-
 
     if message.content == "guess":
         await guessing_game_start(message)
@@ -185,6 +187,13 @@ async def show_comic(message):
         await message.channel.send(file=discord.File(fp=binary, filename="image.png"))
 
     await channel.send(comic.get_alt_text())
+
+@lock
+async def cheer_up(message):
+    await message.channel.send(f'Don\'t be sadd <@{message.author.id}>')
+    gif_bin = tenor_getter.get_gif('cheer up', limit = 50)
+    await message.channel.send(f'<@{message.author.id}>', file = discord.File(io.BytesIO(gif_bin), filename = 'cheerup.gif'))
+    return
 
 @lock
 async def trivia_game(message):

@@ -10,25 +10,25 @@ The one and only repository for the YUHH Discord Bot.
 ## Features
 ### - Guess the drawing
 **Invoke with: guess**\
-Uses Google QuickDraw drawings drawn by other humans that Google's QuickDraw AI was able to guess.\
+Uses Google QuickDraw drawings drawn by other humans that Google's QuickDraw AI was able to guess.
 
 ### - Trivia
 **Invoke with: trivia**\
 A quick multiple-choice trivia games to test your knowledge of random things with your friends.\
-Currently only support random topics, categories and more features will be added soon!\
+Currently only support random topics, categories and more features will be added soon!
 
 ### - Insult
 **Invoke with: insult me**\
 You know that feeling when you really want someone to just insult you in your face? Yeap, we've got you covered!\
-Insults are not that creative yet, but too bad that's all you get. If you want better insults feel free to DM me!\
+Insults are not that creative yet, but too bad that's all you get. If you want better insults feel free to DM me!
 
 ### - Joke
 **Invoke with: tell me a joke**\
-That's you!\
+That's you!
 
 ### - Inspire
 **Invoke with: inspire me**\
-You get stuff said by people way smarter than you.\
+You get stuff said by people way smarter than you.
 
 ### - Testing
 **Invoke with: testing**\
@@ -36,7 +36,7 @@ Try it, nerd.
 
 ### - Scoring
 **Invoke with: show me scores**\
-Displays the scoreboard for all the games, which includes\
+Displays the scoreboard for all the games, which includes
 - Guess the drawing
 - Trivia
 - Guess 4
@@ -45,30 +45,34 @@ Currently doesn't have a reset feature and just cumulates, but hey, that's nice 
 
 ### - Compliment
 **Invoke with: compliment me / praise me**\
-You are beautiful just the way you are. But if you need even more of an ego boost, you can always get YUHH to compliment you.\
+You are beautiful just the way you are. But if you need even more of an ego boost, you can always get YUHH to compliment you.
 
 ### - Pick up lines
 **Invoke with: pick me up**\
 For those lonely singles our there! It's ok, YUHH loves you unconditionally!\
 For those who just can't seem to pick anyone up, please learn from YUHH.\
-YUHH is rated 10 out of 10 best lover on very www.totallylegitdatingsite.com!\
+YUHH is rated 10 out of 10 best lover on very www.totallylegitdatingsite.com!
 
 ### - Comic
 **Invoke with: show me a comic**\
-Ok you're not alone, I think the comics are pretty lame too. (Thank @Junjayel for his choice of API)\
+Ok you're not alone, I think the comics are pretty lame too. (Thank @Junjayel for his choice of API)
 
 ### - Picture
 **Invoke with: "show me a picture of " (*Invokation needs to match all letters and spaces*)**\
 YUHH will search through high quality nice photographs taken by photographers better than you.\
 - Images are copyright-free, from Pixabay. How awesome!\
-- Just don't try to be funny and ask for obscure images thanks.\
+- Just don't try to be funny and ask for obscure images thanks.
 
-## New Features!
 ### - Guess 4
 **Invoke with: guess 4**\
 A similar game to Guess The Drawing\
 - 4 pictures are shown on set intervals, followed by a hint\
-- First to guess the word linking all 4 pictures together wins!\
+- First to guess the word linking all 4 pictures together wins!
+
+## New Features!
+### - Cheer Up
+**Invoke with: i'm sad**\
+Cmon don't be sadd :D
 
 ## Dependencies
 ### Endpoint APIs
@@ -93,7 +97,7 @@ A similar game to Guess The Drawing\
 
 ### Development
 Want to contribute? Great!\
-GIVE US MONEY THANKS!\
+GIVE US MONEY THANKS!
 
 ### Todos
  - Be more awesome
