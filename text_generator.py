@@ -16,7 +16,7 @@ def generate_quote():
     link = r'https://type.fit/api/quotes'
     r = requests.get(url=link, params = {'address' : '127.0.0.1'})
     data = r.json()
-    data = random.choice[data]
+    data = random.choice(data)
     return (data['text'], data['author'])
 
 def generate_compliment():

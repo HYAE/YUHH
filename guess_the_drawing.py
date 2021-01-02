@@ -30,7 +30,7 @@ def sanitise(word):
     word = word.replace('-', '')
     return word.lower()
 
-    
+
 def main():
     img, name = getImage()
 
