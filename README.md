@@ -69,10 +69,36 @@ A similar game to Guess The Drawing\
 - 4 pictures are shown on set intervals, followed by a hint\
 - First to guess the word linking all 4 pictures together wins!
 
-## New Features!
 ### - Cheer Up
 **Invoke with: i'm sad**\
 Cmon don't be sadd :D
+
+## New Features!
+### Music Player
+Yess!! The long-awaited feature is finally here!
+Still work-in-progress though, limitations will be stated below.
+#### Play Youtube Audio
+**Invoke with: play [Youtube Title/URL]**
+- Can only play Youtube audio (might add more platforms in the future)
+- Tracks will be added to queue if one is currently playing
+
+#### Queue System
+**Show Queue**
+**Invoke with: queue**
+- Shows the currently playing track, and upcoming track
+- Looping tracks coming soon!!
+
+**Skip Current Track**
+**Invoke with: skip**
+- Currently only skips the current track, will add an option to skip specific tracks (remove from queue) in the near future!
+
+### Mini Invocations
+**Invoke with: are you there?**\
+Just a quick way to check if YUHH is there for you :>
+
+## Minor Updates
+ - `testing` has more debugging info, especially for the backend terminal.
+ - Fixed case-sensitivity bug in `sanitise()` function
 
 ## Dependencies
 ### Endpoint APIs
@@ -90,7 +116,11 @@ Cmon don't be sadd :D
 ### External Python Libraries
 | Feature | Library |
 | ------ | ------ |
+| Hide Bot Key | [python-dotenv](https://pypi.org/project/python-dotenv/) |
 | Guess The Drawing | [quickdraw 0.1.0](https://pypi.org/project/quickdraw/) |
+| Youtube Converter | [papfy](https://pypi.org/project/pafy/) |
+| FFmpeg for Discord.py | [FFmpeg](https://www.ffmpeg.org/) |
+
 
 ## About us
 > " 'Go for it now. The future is promised to no one.' -Wayne Dyer " - Qiao Hui
@@ -104,20 +134,12 @@ GIVE US MONEY THANKS!
 
 ### Known Bugs
  - When Guess 4 is invoked right after a completed Guess 4 game, the game glitches.
-   - This is due to the function only checking after 1 seconds of asyncio.sleep . Will fix this soon.
+    - This is due to the function only checking after 1 seconds of `asyncio.sleep` . Will fix this soon.
+ - Commands get ignored if something else is going on
+    - This is due to a lock system we have, we should change it to a queue system to that commands will run after the current process is done
+- Guess4 crashes if there are not enough images (IMPORTANT!! WILL FIX SOON!)
 
 ## License
 We are chill people, apart from the licenses of all the depedencies we use, you can freely use our code in any way you want :D\
 Remember to get your own API keys for things that requires it:
 - Pixabay
-
-**Free Software, Hell Yeah!**
-
-[//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
-
-Examples:
-   [PlGh]: <https://github.com/joemccann/dillinger/tree/master/plugins/github/README.md>
-   [PlGd]: <https://github.com/joemccann/dillinger/tree/master/plugins/googledrive/README.md>
-   [PlOd]: <https://github.com/joemccann/dillinger/tree/master/plugins/onedrive/README.md>
-   [PlMe]: <https://github.com/joemccann/dillinger/tree/master/plugins/medium/README.md>
-   [PlGa]: <https://github.com/RahulHP/dillinger/blob/master/plugins/googleanalytics/README.md>
