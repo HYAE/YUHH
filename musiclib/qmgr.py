@@ -1,27 +1,42 @@
 from discord import Embed
+from musiclib.Playlist import Playlist
 # Music Queue Manager
 queues = {}
 # The current track will only be removed from queue once we start playing the next track.
 
-def enqueue(id, track):
-    if id in queues:
-        queues[id].append(track)
-    else:
-        queues[id] = [track]
+def create_playlist(ID, track):
+    return Playlist(ID)
 
-def dequeue(id, pos = 0):
-    if id in queues:
-        if len(queues[id]) > pos:
-            popped = queues[id].pop(0)
-        if len(queues[id]) == 0:
-            remove_queue(id)
+def get_playlist(ID):
+    print(ID, queues)
+    if ID in queues:
+        return queues[ID]
+    else:
+        print("TODO: something wrong in qmgr get_playlist().")
+    return None
+
+def enqueue(ID, track, pos=None):
+    if ID in queues:
+        queues[ID].enqueue(track,pos)
+    else:
+        queues[ID] = create_playlist(ID,track)
+
+def dequeue(ID, pos = 0):
+    popped = None
+    if ID in queues:
+        if len(get_queue(ID)) > pos:
+            popped = queues[ID].dequeue(pos)
+        elif len(get_queue(ID)) == 0:
+            remove_queue(ID)
+        else:
+            print("TODO: the pos is out of range of the queue. add something here")
     else:
         return -1
     return popped
-
-def get_queue(id):
+    
+def get_queue(id): #technically get_playlist now
     if id in queues:
-        return queues[id]
+        return queues[id].get_tracks()
     else:
         return None
 
@@ -39,11 +54,11 @@ def get_embed(id):
         embed.add_field(name="Empty Queue!", value="is a nerd",)
     else:
         queue = get_queue(id)
-        embed.add_field(name="Now Playing", value = f"`0.` {queue[0].title} | `{queue[0].duration//60}:{str(queue[0].duration%60).zfill(2)}`", inline=False)
+        embed.add_field(name="Now Playing", value = f"`0.` {queue.get_tracks()[0].title} | `{queue.get_tracks()[0].duration//60}:{str(queue.get_tracks()[0].duration%60).zfill(2)}`", inline=False)
 
         if len(queue) > 1:  # If queue has upcoming tracks
             upcoming_str_list = []
-            for i, track in enumerate(queue[1:], start = 1):
+            for i, track in enumerate(queue.get_tracks()[1:], start = 1):
                 upcoming_str_list.append(f"`{i}.` {track.title} | `{track.duration//60}:{str(track.duration%60).zfill(2)}`")
         else:
             upcoming_str_list = ["No more songs!"]

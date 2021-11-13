@@ -12,6 +12,7 @@ import pixabay_getter
 import games.guess4.guess4 as guess4
 import tenor_getter
 import musiclib
+from musiclib import Playlist
 
 client = discord.Client()
 
@@ -21,7 +22,6 @@ Trivia_Game = {"Ongoing" : False, "Answer_Index" : 0, "Answers" : [], "Channel" 
 Conversation = {"Ongoing" : False, "Channel" : None}
 Guess4 = {"Ongoing" : False, "Answer" : None, "Try" : 0, "Channel" : None} # Each picture revealed is 1 try, category reveal is also 1 try
 locked = False
-
 error_replies = ["what?", "huh?", "come again?", "something's wrong!!", "pardon?", "ugh?", "i just don't get it"]
 
 @client.event
@@ -136,9 +136,12 @@ async def on_message(message):
     # STOP MUSIC PLAYER
     if message.content == "stop":
         await music_stop(message)
-
+    # CHECK QUEUE
     if message.content == "queue":
         await music_queue(message)
+    # LOOP SONG
+    if message.content == "loop":
+        await music_loop(message)
 
 # Decorator: Stops simultaneous commands, on_message will ignore messages when "locked"
 def lock(func):
@@ -402,17 +405,21 @@ async def music_play(message, search_term):
         yt_url = musiclib.youtube.search(search_term)
         await message.channel.send(f"Fetching: {yt_url}")
 
-    track = musiclib.youtube.url_to_track(yt_url)
+    pafy_obj = musiclib.youtube.url_to_pafy(yt_url)
+    track = musiclib.youtube.url_to_track(pafy_obj)
     if track is None: # Error code for wrong URL
         await message.channel.send("No such thing you dumb dumb!")
         return
 
-    musiclib.qmgr.enqueue(voice_client.channel.id, track)
+    ID = voice_client.channel.id
+    musiclib.qmgr.enqueue(ID, track)
 
     if voice_client.is_playing():
         await message.channel.send("Added to queue.")
         print(f"Added to queue: {yt_url}; Voice Client: {voice_client}; Voice Channel ID: <{voice_channel.id}>\n")
     else:
+        musiclib.qmgr.get_playlist(ID).set_current_track(pafy_obj)
+        asyncio.sleep(0.5)
         voice_client.play(track.source, after = lambda error: music_after(error, voice_client))
         print(f"Playing: {yt_url}; Voice Client: {voice_client}; Guild: {message.guild}; Voice Channel: <{voice_channel}>\n")
 
@@ -438,6 +445,10 @@ async def music_resume(message):
 async def music_skip(message):
     voice_client = discord.utils.get(client.voice_clients, channel=message.author.voice.channel)
     if not voice_client is None and voice_client.is_playing():
+        # Check if loop is on
+        queueID = voice_client.channel.id
+        pl = musiclib.qmgr.get_playlist(queueID)
+        pl.stop_looping()
         voice_client.stop()
         await message.channel.send("Skipped")
     else:
@@ -458,11 +469,22 @@ def music_play_next(voice_client):
     # Return -1: Queue does not exist
     queueID = voice_client.channel.id
 
+    # Check if loop is on
+    pl = musiclib.qmgr.get_playlist(queueID)
+    
+    if pl and pl.looping:
+        stream = musiclib.qmgr.get_playlist(queueID).get_current_track()
+        track = musiclib.youtube.url_to_track(stream)
+        voice_client.play(track.source, after = lambda error: music_after(error, voice_client))
+        return
+    
     musiclib.qmgr.dequeue(queueID)  # Remove the just-finished Track, if queue is empty, nothing will happen, dequeue() will just return None
 
     queue = musiclib.qmgr.get_queue(queueID)
     if queue:   # If queue still exist AKA if there are still tracks left to play
         track = queue[0]
+        musiclib.qmgr.get_playlist(ID).set_current_track(copy.copy(track)) #sets a copy of current track
+        asyncio.sleep(0.5)
         voice_client.play(track.source, after = lambda error: music_after(error, voice_client))
         print(f"Playing Next In Queue: {track.url}\n")
     else:
@@ -484,7 +506,32 @@ async def music_queue(message):
 
     await message.channel.send(embed=musiclib.qmgr.get_embed(queueID))
 
+@lock
+async def music_loop(message):
+    voice_client = discord.utils.get(client.voice_clients, channel=message.author.voice.channel)
+    if voice_client is None:
+        await message.channel.send("I'm not playing shit m8!")
+        return
+    # Return -1: Queue does not exist
+    queueID = voice_client.channel.id
 
+    # Get playlist
+    pl = musiclib.qmgr.get_playlist(queueID)
+
+    # Toggle looping
+    pl.toogle_looping()
+
+    voice_client = discord.utils.get(client.voice_clients, channel=message.author.voice.channel)
+    if voice_client is None:
+        await message.channel.send("I'm not playing shit m8!")
+        return
+    else:
+        if pl.looping:
+            await message.channel.send("Looping!")
+        else:
+            await message.channel.send("no Looping :(")
+        
+    
 def check_ongoing_game():
     #returns True if a game is currently being played, and a string of which game.
     if Guessing_Game["Ongoing"]:
