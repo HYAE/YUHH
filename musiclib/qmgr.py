@@ -53,12 +53,14 @@ def get_embed(id):
     if not id in queues:
         embed.add_field(name="Empty Queue!", value="is a nerd",)
     else:
-        queue = get_queue(id)
-        embed.add_field(name="Now Playing", value = f"`0.` {queue.get_tracks()[0].title} | `{queue.get_tracks()[0].duration//60}:{str(queue.get_tracks()[0].duration%60).zfill(2)}`", inline=False)
+        queue = get_playlist(id)
+        nowPlaying = queue.get_current_track()
+        embed.add_field(name="Now Playing", value = f"`0.` {nowPlaying.title} | `{nowPlaying.length//60}:{str(nowPlaying.length%60).zfill(2)}`", inline=False)
 
-        if len(queue) > 1:  # If queue has upcoming tracks
+        queue = queue.get_tracks()
+        if len(queue) > 0:  # If queue has upcoming tracks
             upcoming_str_list = []
-            for i, track in enumerate(queue.get_tracks()[1:], start = 1):
+            for i, track in enumerate(queue, start = 1):
                 upcoming_str_list.append(f"`{i}.` {track.title} | `{track.duration//60}:{str(track.duration%60).zfill(2)}`")
         else:
             upcoming_str_list = ["No more songs!"]
