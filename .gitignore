@@ -1,4 +1,5 @@
 .env
 scores/
 .quickdrawcache/
+.musicdownloads/
 __pycache__/
