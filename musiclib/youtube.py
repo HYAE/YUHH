@@ -1,47 +1,54 @@
 import discord
-import pafy
-import re, urllib.request
+import youtube_dl
+import re
+import urllib.request
 import requests
 
+
 class Track():
-    def __init__(self, audiosource, title, duration=0, url=None, stream=None, pafy_obj=None, yt_id=None):
+    def __init__(self, audiosource, title, duration=0, url=None, streamURL=None, ytdl_info=None, yt_id=None):
         self.source = audiosource
         self.title = title
         self.duration = duration
         self.url = url
-        self.pafy_obj = pafy_obj
-        self.stream = stream
+        self.streamURL = streamURL
+        self.ytdl_info = ytdl_info
         self.yt_id = yt_id
 
-def url_to_pafy(yt_url):
-    # Return None: URL Doesn't Exist
+
+def url_to_ytdl(yt_url):
+    """Return None: URL Doesn't Exist."""
     if requests.get(f"https://www.youtube.com/oembed?url={yt_url}").status_code != 200:  # Status code 400 if url doesn't exist
         return None
 
-    pafy_obj = pafy.new(yt_url)  # creates a new pafy object
+    ytdl_options = {"format": "bestaudio/best"}
+    ytdl = youtube_dl.YoutubeDL(ytdl_options)
+    ytdl_info = ytdl.extract_info(yt_url, download=False)  # creates a new pafy object
 
-    return pafy_obj
+    return ytdl_info
+
 
 def streamURL_to_DCsource(streamURL):
     FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5','options': '-vn'}
     DC_audio_source = discord.FFmpegPCMAudio(streamURL, **FFMPEG_OPTIONS)  # converts the youtube audio source into a source discord can use
     return DC_audio_source
 
-def pafy_to_track(pafy_obj):
-    audio_stream = pafy_obj.getbestaudio()  # gets a stream object
-    audio_source = streamURL_to_DCsource(audio_stream.url)
 
-    url = f"https://youtu.be/{pafy_obj.videoid}"
-    return Track(audio_source, pafy_obj.title, int(pafy_obj.length), url, audio_stream, pafy_obj, yt_id=pafy_obj.videoid)
+def ytdl_to_track(ytdl_info):
+    audio_source = streamURL_to_DCsource(ytdl_info["url"])
+
+    url = f"https://youtu.be/{ytdl_info['id']}"
+    return Track(audio_source, ytdl_info["title"], int(ytdl_info["duration"]), url, ytdl_info["url"], ytdl_info, yt_id=ytdl_info['id'])
+
 
 def search(searchTerm):
-    # Returns 1st URL
+    """Return 1st URL."""
     html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + searchTerm.replace(" ", "+"))   # Note that str.replace() does NOT replace in-place, duh cause strings ain't mutable
     video_ids = re.findall(r"watch\?v=(\S{11})", html.read().decode())
     return "https://www.youtube.com/watch?v="+video_ids[0]
 
 def sendMP3(yt_id):
-    # Return None: URL Doesn't Exist
+    """Return None: URL Doesn't Exist."""
     if requests.get(f"https://www.youtube.com/oembed?url=https://youtu.be/{yt_id}").status_code != 200:  # Status code 400 if url doesn't exist
         return None
 

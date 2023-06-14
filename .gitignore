@@ -3,3 +3,7 @@ scores/
 .quickdrawcache/
 .musicdownloads/
 __pycache__/
+musiclib/__pycache__/
+games/guess_the_drawing/__pycache__/
+games/guess4/__pycache__/
+games/trivia_game/__pycache__/

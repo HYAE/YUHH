@@ -1,22 +1,23 @@
-import requests, json, random
+import requests
+import random
 from dotenv import load_dotenv
 from os import getenv
 
 load_dotenv()   # To load .env file where PIXABAY_KEY resides
 parameters = {
-    'key' : getenv('PIXABAY_KEY'),
-    'q' : 'yellow flowers',
-    'image_type' : 'photo',
-    'per_page' : '50',
-    'page' : '1'
+    'key': getenv('PIXABAY_KEY'),
+    'q': 'yellow flowers',
+    'image_type': 'photo',
+    'per_page': '50',
+    'page': '1'
     }
 
 
-def get_images(query, qty = 1):
-    # Returns list of images, if qty not met: returns number of pictures found (int)
+def get_images(query, qty=1):
+    """Return list of images, if qty not met: returns no. of pics found (int)."""
     print(f'Pixabay Query: {query}')
     parameters.update({'q': query})
-    r = requests.get(r'https://pixabay.com/api/', params = parameters)
+    r = requests.get(r'https://pixabay.com/api/', params=parameters)
     raw_json = r.json()
 
     if int(raw_json['total']) < qty:

@@ -1,7 +1,9 @@
-import csv, random
-import pixabay_getter # Since YUHH imported this module, YUHH's path is also shared with this 'guess4' module, hence we can just drectly import pixabay_getter
+import csv
+import random
+import pixabay_getter   # Since YUHH imported this module, YUHH's path is also shared with this 'guess4' module, hence we can just drectly import pixabay_getter
 
-def get_question(category = None):
+
+def get_question(category=None):
     with open('games/guess4/guess4_wordbank.csv', 'r') as f:
         word_lists = list(csv.reader(f))
 
