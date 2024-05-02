@@ -124,6 +124,12 @@ Invoke `testing` to view debugging info, mostly printed in the backend terminal.
 | Youtube Support | [youtube-dl](https://pypi.org/project/youtube_dl/) |
 | FFmpeg for Discord.py | [FFmpeg](https://www.ffmpeg.org/) |
 
+### Env
+There should be a `.env` file in the root directory to store API tokens used, the format is
+```txt
+TOKEN={Discord Bot Token}
+PIXABAY_KEY={Pixabay Key}
+```
 
 ## About us
 > " 'Go for it now. The future is promised to no one.' -Wayne Dyer " - Qiao Hui
