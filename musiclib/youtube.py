@@ -1,5 +1,5 @@
 import discord
-import youtube_dl
+import yt_dlp as youtube_dl
 import re
 import urllib.request
 import requests
