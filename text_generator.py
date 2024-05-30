@@ -16,14 +16,14 @@ def generate_joke():
 
 
 def generate_quote():
-    link = r'https://type.fit/api/quotes'
-    r = requests.get(url=link, params={'address': '127.0.0.1'})
-    data = r.json()
-    data = random.choice(data)
-    return (data['text'], data['author'])
+    link = r'https://zenquotes.io/api/random'
+    r = requests.get(url=link)
+    data = r.json()[0]
+    return data['q'], data['a']
 
 
 def generate_compliment():
+    return "Aw mans! You don't deserve compliments tho!"
     link = r'https://complimentr.com/api'
     r = requests.get(url=link, params={'address': '127.0.0.1'})
     data = r.json()
@@ -31,7 +31,7 @@ def generate_compliment():
 
 
 def generate_pickup_line():
-    link = r'https://vinuxd.vercel.app/api/pickup'
-    r = requests.get(url=link, params={'address': '127.0.0.1'})
+    link = r'https://rizzapi.vercel.app/random'
+    r = requests.get(url=link)
     data = r.json()
-    return data['pickup']
+    return data['text']
