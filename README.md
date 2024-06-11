@@ -129,6 +129,7 @@ There should be a `.env` file in the root directory to store API tokens used, th
 ```txt
 TOKEN={Discord Bot Token}
 PIXABAY_KEY={Pixabay Key}
+TENOR_KEY={Tenor Token}
 ```
 
 ## About us
