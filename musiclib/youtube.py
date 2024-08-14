@@ -43,7 +43,8 @@ def ytdl_to_track(ytdl_info):
 
 def search(searchTerm):
     """Return 1st URL."""
-    html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + searchTerm.replace(" ", "+"))   # Note that str.replace() does NOT replace in-place, duh cause strings ain't mutable
+    query = urllib.parse.quote_plus(searchTerm, encoding="utf-8")
+    html = urllib.request.urlopen("https://www.youtube.com/results?search_query=" + query)
     video_ids = re.findall(r"watch\?v=(\S{11})", html.read().decode())
     return "https://www.youtube.com/watch?v="+video_ids[0]
 
