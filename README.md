@@ -156,3 +156,4 @@ We are chill people, apart from the licenses of all the dependencies we use, you
 Remember to get your own API keys for things that requires it:
 - Discord
 - Pixabay
+- Tenor
